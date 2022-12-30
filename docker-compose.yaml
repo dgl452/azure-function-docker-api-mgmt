@@ -19,7 +19,6 @@ services:
     ports:
       - 7072:80
     environment:
-      # Copy .env variables through to container
       - AzureWebJobsStorage=UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://host.docker.internal
       - WEBSITE_HOSTNAME=localhost
   azurite:
@@ -29,7 +28,6 @@ services:
       - 10000:10000
       - 10001:10001
       - 10002:10002
-
   function:
     container_name: azure_function
     depends_on:
@@ -41,6 +39,5 @@ services:
     ports:
       - 7071:80
     environment:
-      # Copy .env variables through to container
       - AzureWebJobsStorage=UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://host.docker.internal
       - WEBSITE_HOSTNAME=localhost
