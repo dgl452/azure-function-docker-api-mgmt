@@ -10,7 +10,7 @@
         "get",
         "post"
       ],
-      "route": "final-service/{*route}"
+      "route": "/"
     },
     {
       "type": "http",
