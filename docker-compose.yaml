@@ -1,5 +1,27 @@
 version: "3.7"
 services:
+  localapimgmt:
+    image: "mcr.microsoft.com/azure-api-management/gateway:v2"
+    container_name: localapimgmt
+    environment:
+      - config.service.endpoint=
+      - config.service.auth=
+      - runtime.deployment.artifact.source=Azure Portal
+      - runtime.deployment.mechanism=Docker
+  authenticator:
+    container_name: authenticator_function
+    depends_on:
+      - azurite
+      - localapimgmt
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 7072:80
+    environment:
+      # Copy .env variables through to container
+      - AzureWebJobsStorage=UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://host.docker.internal
+      - WEBSITE_HOSTNAME=localhost
   azurite:
     image: "mcr.microsoft.com/azure-storage/azurite:latest"
     container_name: azurite
@@ -7,10 +29,12 @@ services:
       - 10000:10000
       - 10001:10001
       - 10002:10002
+
   function:
     container_name: azure_function
     depends_on:
       - azurite
+      - localapimgmt
     build:
       context: .
       dockerfile: Dockerfile
