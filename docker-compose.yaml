@@ -1,0 +1,22 @@
+version: "3.7"
+services:
+  azurite:
+    image: "mcr.microsoft.com/azure-storage/azurite:latest"
+    container_name: azurite
+    ports:
+      - 10000:10000
+      - 10001:10001
+      - 10002:10002
+  function:
+    container_name: azure_function
+    depends_on:
+      - azurite
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 7071:80
+    environment:
+      # Copy .env variables through to container
+      - AzureWebJobsStorage=UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://host.docker.internal
+      - WEBSITE_HOSTNAME=localhost
