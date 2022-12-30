@@ -1,0 +1,18 @@
+<inbound>
+  <!-- Send request to Token Server to validate token (see RFC 7662) -->
+  <send-request mode="new" response-variable-name="tokenstate" timeout="20" ignore-error="true">
+    <set-url>http://authenticator</set-url>
+    <set-method>GET</set-method>
+  </send-request>
+
+  <choose>
+    <!-- Check active property in response -->
+    <when condition="@(((IResponse)context.Variables["tokenstate"]).StatusCode != 200)">
+      <!-- Return 401 Unauthorized with http-problem payload -->
+      <return-response response-variable-name="existing response variable">
+        <set-status code="401" reason="Unauthorized" />
+      </return-response>
+    </when>
+  </choose>
+  <base />
+</inbound>
